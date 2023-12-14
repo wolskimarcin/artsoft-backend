@@ -1,11 +1,11 @@
 package com.busher.artsoftbackend.dao;
 
 import com.busher.artsoftbackend.model.LocalUser;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface LocalUserRepository extends CrudRepository<LocalUser, Long> {
+public interface LocalUserRepository extends JpaRepository<LocalUser, Long> {
 
     Optional<LocalUser> findByUsernameIgnoreCase(String username);
 
