@@ -21,8 +21,8 @@ import java.util.Optional;
 @Component
 public class JWTRequestFilter extends OncePerRequestFilter {
 
-    private JWTService jwtService;
-    private LocalUserRepository repository;
+    private final JWTService jwtService;
+    private final LocalUserRepository repository;
 
     public JWTRequestFilter(JWTService jwtService, LocalUserRepository repository) {
         this.jwtService = jwtService;
@@ -32,7 +32,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String tokenHeader = request.getHeader("Authorization");
-        if (tokenHeader != null && tokenHeader.startsWith("Bearer ")){
+        if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
             String token = tokenHeader.substring(7);
             try {
                 String username = jwtService.getUsername(token);
