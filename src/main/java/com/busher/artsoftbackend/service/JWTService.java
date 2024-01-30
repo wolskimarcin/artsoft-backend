@@ -13,6 +13,7 @@ import java.util.Date;
 public class JWTService {
 
     private static final String USERNAME_KEY = "USERNAME";
+    private static final String EMAIL_KEY = "EMAIL";
     @Value("${jwt.algorithm.key}")
     private String algorithmKey;
     @Value("${jwt.issuer}")
@@ -34,7 +35,19 @@ public class JWTService {
                 .sign(algorithm);
     }
 
+    public String generateVerificationJWT(LocalUser user) {
+        return JWT.create()
+                .withClaim(EMAIL_KEY, user.getEmail())
+                .withExpiresAt(new Date(System.currentTimeMillis() + (1000L * expiryInSeconds)))
+                .withIssuer(issuer)
+                .sign(algorithm);
+    }
+
     public String getUsername(String token) {
         return JWT.decode(token).getClaim(USERNAME_KEY).asString();
+    }
+
+    public String getEmail(String token) {
+        return JWT.decode(token).getClaim(EMAIL_KEY).asString();
     }
 }

@@ -17,3 +17,8 @@ docker restart artsoft-postgres-container
 ```
 docker exec -it artsoft-postgres-container psql -U postgres
 ```
+
+## Run smtp4dev in docker
+```agsl
+docker run --rm -it -p 3000:80 -p 2525:25 rnwood/smtp4dev
+```
