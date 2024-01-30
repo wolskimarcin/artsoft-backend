@@ -30,6 +30,8 @@ public class LocalUser {
     private List<Address> addresses = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VerificationToken> verificationTokens = new ArrayList<>();
+    @Column(name = "email_verified", nullable = false)
+    private Boolean isEmailVerified = false;
 
     public List<VerificationToken> getVerificationTokens() {
         return verificationTokens;
@@ -95,4 +97,11 @@ public class LocalUser {
         this.id = id;
     }
 
+    public Boolean isEmailVerified() {
+        return isEmailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        isEmailVerified = emailVerified;
+    }
 }
