@@ -23,7 +23,7 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        logger.info("Initializing vehicles in the database...");
+        logger.info("Initializing products in the database...");
 
         Product product1 = new Product();
         product1.setName("ASG Gun 1");

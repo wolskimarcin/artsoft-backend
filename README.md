@@ -27,3 +27,8 @@ docker run --rm -it -p 3000:80 -p 2525:25 rnwood/smtp4dev
 ```agsl
 http://localhost:3000/
 ```
+
+## swagger ui
+```agsl
+http://localhost:8080/swagger-ui/index.html
+```

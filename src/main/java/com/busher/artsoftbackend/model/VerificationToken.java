@@ -12,7 +12,6 @@ public class VerificationToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @Lob
     @Column(name = "token", nullable = false, unique = true)
     private String token;
     @Column(name = "created_timestamp", nullable = false)
