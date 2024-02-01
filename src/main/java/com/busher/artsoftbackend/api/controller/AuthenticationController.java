@@ -6,10 +6,12 @@ import com.busher.artsoftbackend.api.model.RegistrationBody;
 import com.busher.artsoftbackend.exception.EmailFailureException;
 import com.busher.artsoftbackend.exception.UserAlreadyExistsException;
 import com.busher.artsoftbackend.exception.UserNotVerifiedException;
+import com.busher.artsoftbackend.model.LocalUser;
 import com.busher.artsoftbackend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -69,6 +71,11 @@ public class AuthenticationController {
         } else {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
+    }
+
+    @GetMapping("/me")
+    public LocalUser getLoggedInUserProfile(@AuthenticationPrincipal LocalUser user) {
+        return user;
     }
 
 }

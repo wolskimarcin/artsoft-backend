@@ -39,10 +39,12 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                 Optional<LocalUser> optionalLocalUser = repository.findByUsernameIgnoreCase(username);
                 if (optionalLocalUser.isPresent()) {
                     LocalUser user = optionalLocalUser.get();
-                    UsernamePasswordAuthenticationToken authenticationToken
-                            = new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    if (user.isEmailVerified()) {
+                        UsernamePasswordAuthenticationToken authenticationToken
+                                = new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    }
                 }
             } catch (JWTDecodeException ignored) {
 

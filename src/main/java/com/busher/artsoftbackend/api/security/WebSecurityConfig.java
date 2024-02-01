@@ -23,7 +23,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/product",
                         "/auth/register",
                         "/auth/login",
-                        "/auth/**",
+                        "/auth/verify",
+                        "/error",
                         "/swagger-ui/**",
                         "/v3/**").permitAll()
                 .anyRequest().authenticated());

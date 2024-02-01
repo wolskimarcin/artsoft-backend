@@ -47,7 +47,4 @@ public class JWTService {
         return JWT.decode(token).getClaim(USERNAME_KEY).asString();
     }
 
-    public String getEmail(String token) {
-        return JWT.decode(token).getClaim(EMAIL_KEY).asString();
-    }
 }
