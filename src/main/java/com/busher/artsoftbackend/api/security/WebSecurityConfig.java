@@ -24,6 +24,8 @@ public class WebSecurityConfig {
                         "/auth/register",
                         "/auth/login",
                         "/auth/verify",
+                        "/auth/forgot",
+                        "/auth/reset",
                         "/error",
                         "/swagger-ui/**",
                         "/v3/**").permitAll()

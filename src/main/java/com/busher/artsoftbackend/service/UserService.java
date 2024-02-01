@@ -1,10 +1,12 @@
 package com.busher.artsoftbackend.service;
 
 import com.busher.artsoftbackend.api.model.LoginBody;
+import com.busher.artsoftbackend.api.model.PasswordResetBody;
 import com.busher.artsoftbackend.api.model.RegistrationBody;
 import com.busher.artsoftbackend.dao.LocalUserRepository;
 import com.busher.artsoftbackend.dao.VerificationTokenRepository;
 import com.busher.artsoftbackend.exception.EmailFailureException;
+import com.busher.artsoftbackend.exception.EmailNotFoundException;
 import com.busher.artsoftbackend.exception.UserAlreadyExistsException;
 import com.busher.artsoftbackend.exception.UserNotVerifiedException;
 import com.busher.artsoftbackend.model.LocalUser;
@@ -95,6 +97,27 @@ public class UserService {
             }
         }
         return false;
+    }
+
+    public void forgotPassword(String email) throws EmailNotFoundException, EmailFailureException {
+        Optional<LocalUser> opUser = localUserRepository.findByEmailIgnoreCase(email);
+        if (opUser.isPresent()) {
+            LocalUser user = opUser.get();
+            String token = jwtService.generatePasswordResetJWT(user);
+            emailService.sendPasswordResetEmail(user, token);
+        } else {
+            throw new EmailNotFoundException();
+        }
+    }
+
+    public void resetPassword(PasswordResetBody body) {
+        String email = jwtService.getResetPasswordEmail(body.getToken());
+        Optional<LocalUser> opUser = localUserRepository.findByEmailIgnoreCase(email);
+        if (opUser.isPresent()) {
+            LocalUser user = opUser.get();
+            user.setPassword(encryptionService.encryptPassword(body.getPassword()));
+            localUserRepository.save(user);
+        }
     }
 
 }

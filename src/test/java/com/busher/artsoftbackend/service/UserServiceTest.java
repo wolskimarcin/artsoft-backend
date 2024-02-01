@@ -1,10 +1,12 @@
 package com.busher.artsoftbackend.service;
 
 import com.busher.artsoftbackend.api.model.LoginBody;
+import com.busher.artsoftbackend.api.model.PasswordResetBody;
 import com.busher.artsoftbackend.api.model.RegistrationBody;
 import com.busher.artsoftbackend.dao.LocalUserRepository;
 import com.busher.artsoftbackend.dao.VerificationTokenRepository;
 import com.busher.artsoftbackend.exception.EmailFailureException;
+import com.busher.artsoftbackend.exception.EmailNotFoundException;
 import com.busher.artsoftbackend.exception.UserAlreadyExistsException;
 import com.busher.artsoftbackend.exception.UserNotVerifiedException;
 import com.busher.artsoftbackend.model.LocalUser;
@@ -205,6 +207,43 @@ public class UserServiceTest {
         assertEquals("encryptedPassword", user.getPassword());
         assertEquals(registrationBody.getFirstName(), user.getFirstName());
         assertEquals(registrationBody.getLastName(), user.getLastName());
+    }
+
+    @Test
+    public void whenForgotPasswordWithValidEmail_thenPasswordResetEmailSent() throws EmailNotFoundException, EmailFailureException {
+        String email = "test@example.com";
+        LocalUser user = new LocalUser();
+        user.setEmail(email);
+
+        when(localUserRepository.findByEmailIgnoreCase(email)).thenReturn(Optional.of(user));
+        when(jwtService.generatePasswordResetJWT(user)).thenReturn("resetToken");
+
+        userService.forgotPassword(email);
+
+        verify(emailService).sendPasswordResetEmail(eq(user), eq("resetToken"));
+    }
+
+    @Test
+    public void whenResetPasswordWithValidTokenAndEmail_thenPasswordResetSuccessful() {
+        String token = "resetToken";
+        String email = "test@example.com";
+        String newPassword = "newPassword";
+
+        PasswordResetBody body = new PasswordResetBody();
+        body.setToken(token);
+        body.setPassword(newPassword);
+
+        LocalUser user = new LocalUser();
+        user.setEmail(email);
+
+        when(jwtService.getResetPasswordEmail(token)).thenReturn(email);
+        when(localUserRepository.findByEmailIgnoreCase(email)).thenReturn(Optional.of(user));
+        when(encryptionService.encryptPassword(newPassword)).thenReturn("encryptedPassword");
+
+        userService.resetPassword(body);
+
+        verify(localUserRepository).save(user);
+        assertEquals("encryptedPassword", user.getPassword());
     }
 
 }

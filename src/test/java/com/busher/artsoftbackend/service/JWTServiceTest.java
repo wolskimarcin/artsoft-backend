@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.MissingClaimException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.busher.artsoftbackend.dao.LocalUserRepository;
 import com.busher.artsoftbackend.model.LocalUser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +30,8 @@ class JWTServiceTest {
     private String algorithmKey;
     @Autowired
     private JWTService jwtService;
+    @Autowired
+    private LocalUserRepository localUserRepository;
 
     private LocalUser testUser;
 
@@ -83,12 +86,37 @@ class JWTServiceTest {
     }
 
     @Test
-    public void whenGetUsername_withCorrectJWTButWithoutIssuer_thenThrowException() {
+    public void whenGetUsername_withJWTCorrectlySignedNoIssuer_thenThrowException() {
         String token =
                 JWT.create().withClaim("USERNAME", testUser.getUsername())
                         .sign(Algorithm.HMAC256(algorithmKey));
         Assertions.assertThrows(MissingClaimException.class,
                 () -> jwtService.getUsername(token));
+    }
+
+    @Test
+    public void WhenResetPassword_withJWTNotGeneratedByUs_thenThrowException() {
+        String token =
+                JWT.create().withClaim("RESET_PASSWORD_EMAIL", testUser.getEmail()).sign(Algorithm.HMAC256(
+                        "NotTheRealSecret"));
+        Assertions.assertThrows(SignatureVerificationException.class,
+                () -> jwtService.getResetPasswordEmail(token));
+    }
+
+    @Test
+    public void WhenResetPassword_withJWTCorrectlySignedNoIssuer_thenThrowException() {
+        String token =
+                JWT.create().withClaim("RESET_PASSWORD_EMAIL", testUser.getEmail())
+                        .sign(Algorithm.HMAC256(algorithmKey));
+        Assertions.assertThrows(MissingClaimException.class,
+                () -> jwtService.getResetPasswordEmail(token));
+    }
+
+    @Test
+    public void WhenResetPassword_withJWTCorrectlyCreated_thenReturnCorrectResetPasswordEmail() {
+        LocalUser user = localUserRepository.findByUsernameIgnoreCase(testUser.getUsername()).get();
+        String token = jwtService.generatePasswordResetJWT(user);
+        Assertions.assertEquals(user.getEmail(), jwtService.getResetPasswordEmail(token));
     }
 
 }

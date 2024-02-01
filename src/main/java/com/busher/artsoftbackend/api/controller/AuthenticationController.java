@@ -2,8 +2,10 @@ package com.busher.artsoftbackend.api.controller;
 
 import com.busher.artsoftbackend.api.model.LoginBody;
 import com.busher.artsoftbackend.api.model.LoginResponse;
+import com.busher.artsoftbackend.api.model.PasswordResetBody;
 import com.busher.artsoftbackend.api.model.RegistrationBody;
 import com.busher.artsoftbackend.exception.EmailFailureException;
+import com.busher.artsoftbackend.exception.EmailNotFoundException;
 import com.busher.artsoftbackend.exception.UserAlreadyExistsException;
 import com.busher.artsoftbackend.exception.UserNotVerifiedException;
 import com.busher.artsoftbackend.model.LocalUser;
@@ -76,6 +78,24 @@ public class AuthenticationController {
     @GetMapping("/me")
     public LocalUser getLoggedInUserProfile(@AuthenticationPrincipal LocalUser user) {
         return user;
+    }
+
+    @PostMapping("/forgot")
+    public ResponseEntity forgotPassword(@RequestParam String email) {
+        try {
+            userService.forgotPassword(email);
+            return ResponseEntity.ok().build();
+        } catch (EmailNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (EmailFailureException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/reset")
+    public ResponseEntity resetPassword(@Valid @RequestBody PasswordResetBody body) {
+        userService.resetPassword(body);
+        return ResponseEntity.ok().build();
     }
 
 }
