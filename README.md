@@ -31,11 +31,6 @@ Before you begin, ensure you have Docker installed on your system.
     docker restart artsoft-postgres-container
     ```
 
-3. **Access the PostgreSQL container**:
-    ```bash
-    docker exec -it artsoft-postgres-container psql -U postgres
-    ```
-
 #### smtp4dev
 
 smtp4dev is used to simulate an SMTP server for development purposes.
