@@ -23,14 +23,14 @@ public class UserService {
 
     private final LocalUserRepository localUserRepository;
     private final VerificationTokenRepository verificationTokenRepository;
-    private final EncryptionService encryptionService;
+    private final PasswordHashingService passwordHashingService;
     private final JWTService jwtService;
     private final EmailService emailService;
 
-    public UserService(LocalUserRepository localUserRepository, VerificationTokenRepository verificationTokenRepository, EncryptionService encryptionService, JWTService jwtService, EmailService emailService) {
+    public UserService(LocalUserRepository localUserRepository, VerificationTokenRepository verificationTokenRepository, PasswordHashingService passwordHashingService, JWTService jwtService, EmailService emailService) {
         this.localUserRepository = localUserRepository;
         this.verificationTokenRepository = verificationTokenRepository;
-        this.encryptionService = encryptionService;
+        this.passwordHashingService = passwordHashingService;
         this.jwtService = jwtService;
         this.emailService = emailService;
     }
@@ -45,7 +45,7 @@ public class UserService {
         user.setUsername(registrationBody.getUsername());
         user.setFirstName(registrationBody.getFirstName());
         user.setLastName(registrationBody.getLastName());
-        user.setPassword(encryptionService.encryptPassword(registrationBody.getPassword()));
+        user.setPassword(passwordHashingService.hashPassword(registrationBody.getPassword()));
         VerificationToken verificationToken = createVerificationToken(user);
         emailService.sendVerificationEmail(verificationToken);
         return localUserRepository.save(user);
@@ -64,7 +64,7 @@ public class UserService {
         Optional<LocalUser> opUser = localUserRepository.findByUsernameIgnoreCase(loginBody.getUsername());
         if (opUser.isPresent()) {
             LocalUser user = opUser.get();
-            if (encryptionService.verifyPassword(loginBody.getPassword(), user.getPassword())) {
+            if (passwordHashingService.verifyPassword(loginBody.getPassword(), user.getPassword())) {
                 if (user.isEmailVerified()) {
                     return jwtService.generateJWT(user);
                 } else {
@@ -115,7 +115,7 @@ public class UserService {
         Optional<LocalUser> opUser = localUserRepository.findByEmailIgnoreCase(email);
         if (opUser.isPresent()) {
             LocalUser user = opUser.get();
-            user.setPassword(encryptionService.encryptPassword(body.getPassword()));
+            user.setPassword(passwordHashingService.hashPassword(body.getPassword()));
             localUserRepository.save(user);
         }
     }

@@ -7,37 +7,37 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ContextConfiguration(classes = {EncryptionService.class})
+@ContextConfiguration(classes = {PasswordHashingService.class})
 @SpringBootTest
-class EncryptionServiceTest {
+class PasswordHashingServiceTest {
 
     @Autowired
-    private EncryptionService encryptionService;
+    private PasswordHashingService passwordHashingService;
 
     @Test
-    void whenEncryptPassword_thenReturnsNonNullEncryptedPassword() {
+    void whenHashPassword_thenReturnsNonNullHashedPassword() {
         String password = "testPassword";
-        String encryptedPassword = encryptionService.encryptPassword(password);
+        String hashedPassword = passwordHashingService.hashPassword(password);
 
-        assertNotNull(encryptedPassword, "Encrypted password should not be null.");
+        assertNotNull(hashedPassword, "Hashed password should not be null.");
     }
 
     @Test
     void whenVerifyPassword_WithCorrectPassword_ThenReturnsTrue() {
         String password = "testPassword";
-        String encryptedPassword = encryptionService.encryptPassword(password);
+        String hashedPassword = passwordHashingService.hashPassword(password);
 
-        assertTrue(encryptionService.verifyPassword(password, encryptedPassword),
+        assertTrue(passwordHashingService.verifyPassword(password, hashedPassword),
                 "Password verification should succeed with the correct password.");
     }
 
     @Test
     void whenVerifyPassword_WithIncorrectPassword_ThenReturnsFalse() {
         String correctPassword = "correctPassword";
-        String encryptedPassword = encryptionService.encryptPassword(correctPassword);
+        String hashedPassword = passwordHashingService.hashPassword(correctPassword);
         String incorrectPassword = "incorrectPassword";
 
-        assertFalse(encryptionService.verifyPassword(incorrectPassword, encryptedPassword),
+        assertFalse(passwordHashingService.verifyPassword(incorrectPassword, hashedPassword),
                 "Password verification should fail with an incorrect password.");
     }
 }

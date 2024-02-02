@@ -6,18 +6,17 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EncryptionService {
+public class PasswordHashingService {
 
-    @Value("${encryption.salt.rounds}")
+    @Value("${hashing.salt.rounds}")
     private int saltRounds;
     private String salt;
-
     @PostConstruct
     public void postConstruct() {
         salt = BCrypt.gensalt(saltRounds);
     }
 
-    public String encryptPassword(String password) {
+    public String hashPassword(String password) {
         return BCrypt.hashpw(password, salt);
     }
 

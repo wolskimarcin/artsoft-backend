@@ -31,7 +31,7 @@ public class UserServiceTest {
     @Mock
     private VerificationTokenRepository verificationTokenRepository;
     @Mock
-    private EncryptionService encryptionService;
+    private PasswordHashingService passwordHashingService;
     @Mock
     private JWTService jwtService;
     @Mock
@@ -56,7 +56,7 @@ public class UserServiceTest {
         RegistrationBody registrationBody = createTestRegistrationBody();
         when(localUserRepository.findByEmailIgnoreCase(registrationBody.getEmail())).thenReturn(Optional.empty());
         when(localUserRepository.findByUsernameIgnoreCase(registrationBody.getUsername())).thenReturn(Optional.empty());
-        when(encryptionService.encryptPassword(registrationBody.getPassword())).thenReturn("encryptedPassword");
+        when(passwordHashingService.hashPassword(registrationBody.getPassword())).thenReturn("hashedPassword");
         when(localUserRepository.save(any(LocalUser.class))).thenAnswer(invocation -> {
             LocalUser user = invocation.getArgument(0);
             user.setId(1L);
@@ -87,10 +87,10 @@ public class UserServiceTest {
 
         LocalUser user = new LocalUser();
         user.setEmailVerified(true);
-        user.setPassword("encryptedPassword");
+        user.setPassword("hashedPassword");
 
         when(localUserRepository.findByUsernameIgnoreCase("testUser")).thenReturn(Optional.of(user));
-        when(encryptionService.verifyPassword("correctPassword", "encryptedPassword")).thenReturn(true);
+        when(passwordHashingService.verifyPassword("correctPassword", "hashedPassword")).thenReturn(true);
         when(jwtService.generateJWT(user)).thenReturn("generatedJWTToken");
 
         String token = userService.loginUser(loginBody);
@@ -107,10 +107,10 @@ public class UserServiceTest {
 
         LocalUser unverifiedUser = new LocalUser();
         unverifiedUser.setEmailVerified(false);
-        unverifiedUser.setPassword("encryptedPassword");
+        unverifiedUser.setPassword("hashedPassword");
 
         when(localUserRepository.findByUsernameIgnoreCase("user")).thenReturn(Optional.of(unverifiedUser));
-        when(encryptionService.verifyPassword("password", "encryptedPassword")).thenReturn(true);
+        when(passwordHashingService.verifyPassword("password", "hashedPassword")).thenReturn(true);
 
         doNothing().when(emailService).sendVerificationEmail(any(VerificationToken.class));
 
@@ -127,10 +127,10 @@ public class UserServiceTest {
 
         LocalUser user = new LocalUser();
         user.setEmailVerified(true);
-        user.setPassword("encryptedPassword");
+        user.setPassword("hashedPassword");
 
         when(localUserRepository.findByUsernameIgnoreCase("user")).thenReturn(Optional.of(user));
-        when(encryptionService.verifyPassword("wrongPassword", "encryptedPassword")).thenReturn(false);
+        when(passwordHashingService.verifyPassword("wrongPassword", "hashedPassword")).thenReturn(false);
 
         assertNull(userService.loginUser(loginBody), "Expected null due to incorrect password");
     }
@@ -204,7 +204,7 @@ public class UserServiceTest {
         assertNotNull(user);
         assertEquals(registrationBody.getUsername(), user.getUsername());
         assertEquals(registrationBody.getEmail(), user.getEmail());
-        assertEquals("encryptedPassword", user.getPassword());
+        assertEquals("hashedPassword", user.getPassword());
         assertEquals(registrationBody.getFirstName(), user.getFirstName());
         assertEquals(registrationBody.getLastName(), user.getLastName());
     }
@@ -238,12 +238,12 @@ public class UserServiceTest {
 
         when(jwtService.getResetPasswordEmail(token)).thenReturn(email);
         when(localUserRepository.findByEmailIgnoreCase(email)).thenReturn(Optional.of(user));
-        when(encryptionService.encryptPassword(newPassword)).thenReturn("encryptedPassword");
+        when(passwordHashingService.hashPassword(newPassword)).thenReturn("hashedPassword");
 
         userService.resetPassword(body);
 
         verify(localUserRepository).save(user);
-        assertEquals("encryptedPassword", user.getPassword());
+        assertEquals("hashedPassword", user.getPassword());
     }
 
 }
