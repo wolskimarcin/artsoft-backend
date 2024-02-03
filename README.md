@@ -8,6 +8,9 @@ Built with Spring Boot, Artsoft Backend leverages PostgreSQL for database manage
 Hibernate as the ORM tool for efficient database operations, 
 smtp4dev for email testing in development environments, and Swagger UI for interactive API documentation.
 
+Frontend project is available at [artsoft-frontend](https://github.com/wolskimarcin/artsoft-frontend).
+
+
 
 ## Getting Started
 
