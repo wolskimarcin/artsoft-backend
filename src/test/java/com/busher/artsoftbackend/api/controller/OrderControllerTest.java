@@ -44,7 +44,7 @@ public class OrderControllerTest {
         testUser.setEmail("testuser@example.com");
         testUser.setFirstName("Test");
         testUser.setLastName("User");
-        testUser.setEmailVerified(true);
+        testUser.setIsEmailVerified(true);
 
         Address address1 = new Address();
         address1.setId(201L);

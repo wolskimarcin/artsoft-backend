@@ -86,7 +86,7 @@ public class UserServiceTest {
         loginBody.setPassword("correctPassword");
 
         LocalUser user = new LocalUser();
-        user.setEmailVerified(true);
+        user.setIsEmailVerified(true);
         user.setPassword("hashedPassword");
 
         when(localUserRepository.findByUsernameIgnoreCase("testUser")).thenReturn(Optional.of(user));
@@ -106,7 +106,7 @@ public class UserServiceTest {
         loginBody.setPassword("password");
 
         LocalUser unverifiedUser = new LocalUser();
-        unverifiedUser.setEmailVerified(false);
+        unverifiedUser.setIsEmailVerified(false);
         unverifiedUser.setPassword("hashedPassword");
 
         when(localUserRepository.findByUsernameIgnoreCase("user")).thenReturn(Optional.of(unverifiedUser));
@@ -126,7 +126,7 @@ public class UserServiceTest {
         loginBody.setPassword("wrongPassword");
 
         LocalUser user = new LocalUser();
-        user.setEmailVerified(true);
+        user.setIsEmailVerified(true);
         user.setPassword("hashedPassword");
 
         when(localUserRepository.findByUsernameIgnoreCase("user")).thenReturn(Optional.of(user));
@@ -151,7 +151,7 @@ public class UserServiceTest {
         String validToken = "validToken";
         VerificationToken verificationToken = new VerificationToken();
         LocalUser user = new LocalUser();
-        user.setEmailVerified(false);
+        user.setIsEmailVerified(false);
 
         verificationToken.setUser(user);
         when(verificationTokenRepository.findByToken(validToken)).thenReturn(Optional.of(verificationToken));
@@ -159,7 +159,7 @@ public class UserServiceTest {
         boolean result = userService.verifyUser(validToken);
 
         assertTrue(result);
-        assertTrue(user.isEmailVerified());
+        assertTrue(user.getIsEmailVerified());
         verify(verificationTokenRepository).deleteByUser(user);
     }
 
@@ -177,7 +177,7 @@ public class UserServiceTest {
     public void whenVerifyUserAndUserAlreadyVerified_thenNoActionTaken() {
         String token = "existingToken";
         LocalUser alreadyVerifiedUser = new LocalUser();
-        alreadyVerifiedUser.setEmailVerified(true);
+        alreadyVerifiedUser.setIsEmailVerified(true);
 
         VerificationToken verificationToken = new VerificationToken();
         verificationToken.setToken(token);

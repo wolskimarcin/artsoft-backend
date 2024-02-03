@@ -65,7 +65,7 @@ public class UserService {
         if (opUser.isPresent()) {
             LocalUser user = opUser.get();
             if (passwordHashingService.verifyPassword(loginBody.getPassword(), user.getPassword())) {
-                if (user.isEmailVerified()) {
+                if (user.getIsEmailVerified()) {
                     return jwtService.generateJWT(user);
                 } else {
                     List<VerificationToken> verificationTokens = user.getVerificationTokens();
@@ -89,8 +89,8 @@ public class UserService {
         if (opToken.isPresent()) {
             VerificationToken verificationToken = opToken.get();
             LocalUser user = verificationToken.getUser();
-            if (!user.isEmailVerified()) {
-                user.setEmailVerified(true);
+            if (!user.getIsEmailVerified()) {
+                user.setIsEmailVerified(true);
                 localUserRepository.save(user);
                 verificationTokenRepository.deleteByUser(user);
                 return true;

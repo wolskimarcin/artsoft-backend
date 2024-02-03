@@ -1,9 +1,13 @@
 package com.busher.artsoftbackend.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Timestamp;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "verification_token")
 public class VerificationToken {
@@ -19,37 +23,5 @@ public class VerificationToken {
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private LocalUser user;
-
-    public LocalUser getUser() {
-        return user;
-    }
-
-    public void setUser(LocalUser user) {
-        this.user = user;
-    }
-
-    public Timestamp getCreatedTimestamp() {
-        return createdTimestamp;
-    }
-
-    public void setCreatedTimestamp(Timestamp createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
 }

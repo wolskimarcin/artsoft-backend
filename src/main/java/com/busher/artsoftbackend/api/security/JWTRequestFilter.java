@@ -39,7 +39,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                 Optional<LocalUser> optionalLocalUser = repository.findByUsernameIgnoreCase(username);
                 if (optionalLocalUser.isPresent()) {
                     LocalUser user = optionalLocalUser.get();
-                    if (user.isEmailVerified()) {
+                    if (user.getIsEmailVerified()) {
                         UsernamePasswordAuthenticationToken authenticationToken
                                 = new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
                         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

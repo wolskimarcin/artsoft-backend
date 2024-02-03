@@ -60,7 +60,7 @@ public class JWTRequestFilterTest {
         LocalUser user = new LocalUser();
         when(jwtService.getUsername(SAMPLE_TOKEN)).thenReturn(USERNAME);
         when(localUserRepository.findByUsernameIgnoreCase(USERNAME)).thenReturn(Optional.of(user));
-        user.setEmailVerified(true);
+        user.setIsEmailVerified(true);
 
         mvc.perform(get(AUTHENTICATED_PATH)
                         .header("Authorization", TOKEN_PREFIX + SAMPLE_TOKEN))
