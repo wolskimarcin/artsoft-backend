@@ -3,11 +3,12 @@ package com.busher.artsoftbackend.api.controller;
 
 import com.busher.artsoftbackend.model.Product;
 import com.busher.artsoftbackend.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/product")
@@ -20,8 +21,17 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getProducts() {
-        return productService.getProducts();
+    public ResponseEntity<Page<Product>> getProducts(
+            @RequestParam(required = false) String searchTerm,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<Product> products;
+        if (searchTerm == null || searchTerm.isEmpty()) {
+            products = productService.getProducts(page, size);
+        } else {
+            products = productService.getProductsBySearchTerm(searchTerm, page, size);
+        }
+        return ResponseEntity.ok(products);
     }
 
 }
