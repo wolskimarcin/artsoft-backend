@@ -9,15 +9,17 @@ import com.busher.artsoftbackend.model.LocalUser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Optional;
 
-@ContextConfiguration(classes = {JWTService.class})
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
 @SpringBootTest
 @TestPropertySource(properties = {
         "jwt.algorithm.key=testKey",
@@ -30,7 +32,7 @@ class JWTServiceTest {
     private String algorithmKey;
     @Autowired
     private JWTService jwtService;
-    @Autowired
+    @Mock
     private LocalUserRepository localUserRepository;
 
     private LocalUser testUser;
@@ -65,7 +67,7 @@ class JWTServiceTest {
                 .build()
                 .verify(token));
 
-        assertEquals(testUser.getEmail(), JWT.decode(token).getClaim("EMAIL").asString());
+        assertEquals(testUser.getEmail(), JWT.decode(token).getClaim("VERIFICATION_EMAIL").asString());
     }
 
     @Test
@@ -98,7 +100,7 @@ class JWTServiceTest {
     public void WhenResetPassword_withJWTNotGeneratedByUs_thenThrowException() {
         String token =
                 JWT.create().withClaim("RESET_PASSWORD_EMAIL", testUser.getEmail()).sign(Algorithm.HMAC256(
-                        "NotTheRealSecret"));
+                        "fake-secret"));
         Assertions.assertThrows(SignatureVerificationException.class,
                 () -> jwtService.getResetPasswordEmail(token));
     }
@@ -114,6 +116,9 @@ class JWTServiceTest {
 
     @Test
     public void WhenResetPassword_withJWTCorrectlyCreated_thenReturnCorrectResetPasswordEmail() {
+        when(localUserRepository.findByUsernameIgnoreCase(testUser.getUsername()))
+                .thenReturn(Optional.of(testUser));
+
         LocalUser user = localUserRepository.findByUsernameIgnoreCase(testUser.getUsername()).get();
         String token = jwtService.generatePasswordResetJWT(user);
         Assertions.assertEquals(user.getEmail(), jwtService.getResetPasswordEmail(token));
