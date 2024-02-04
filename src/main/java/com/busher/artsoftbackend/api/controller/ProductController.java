@@ -1,14 +1,14 @@
 package com.busher.artsoftbackend.api.controller;
 
 
+import com.busher.artsoftbackend.model.Inventory;
 import com.busher.artsoftbackend.model.Product;
 import com.busher.artsoftbackend.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/product")
@@ -32,6 +32,13 @@ public class ProductController {
             products = productService.getProductsBySearchTerm(searchTerm, page, size);
         }
         return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/{id}/inventory")
+    public ResponseEntity<Inventory> getProductInventory(@PathVariable Long id) {
+        Optional<Inventory> opInventory = productService.findInventoryByProductId(id);
+        return opInventory.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }

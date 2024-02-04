@@ -1,5 +1,6 @@
 package com.busher.artsoftbackend.api.controller;
 
+import com.busher.artsoftbackend.model.Inventory;
 import com.busher.artsoftbackend.model.Product;
 import com.busher.artsoftbackend.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -57,7 +59,15 @@ public class ProductControllerTest {
 
         Mockito.when(productService.getProductsBySearchTerm(Mockito.anyString(), Mockito.anyInt(),
                 Mockito.anyInt())).thenReturn(filteredProductsPage);
+
+        Inventory inventory = new Inventory();
+        inventory.setId(1L);
+        inventory.setQuantity(100);
+
+        Mockito.when(productService.findInventoryByProductId(1L)).thenReturn(Optional.of(inventory));
+        Mockito.when(productService.findInventoryByProductId(2L)).thenReturn(Optional.empty());
     }
+
 
     @Test
     void whenGetProductsWithoutSearchTerm_thenReturnsAllProducts() throws Exception {
@@ -80,4 +90,19 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.content[0].name").value("Dog Toy"))
                 .andExpect(jsonPath("$.totalElements").value(1));
     }
+
+    @Test
+    void whenGetInventoryByProductId_andInventoryExists_thenReturnsInventory() throws Exception {
+        mockMvc.perform(get("/product/1/inventory"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.quantity").value(100));
+    }
+
+    @Test
+    void whenGetInventoryByProductId_andInventoryDoesNotExist_thenReturnsNotFound() throws Exception {
+        mockMvc.perform(get("/product/2/inventory"))
+                .andExpect(status().isNotFound());
+    }
+
 }
