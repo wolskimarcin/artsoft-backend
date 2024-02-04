@@ -20,7 +20,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<Page<Product>> getProducts(
             @RequestParam(required = false) String searchTerm,
             @RequestParam(defaultValue = "0") int page,
