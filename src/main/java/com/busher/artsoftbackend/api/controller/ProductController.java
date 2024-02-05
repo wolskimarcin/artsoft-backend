@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/product")
 public class ProductController {
 
     private final ProductService productService;
@@ -20,7 +19,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("")
+    @GetMapping("/product")
     public ResponseEntity<Page<Product>> getProducts(
             @RequestParam(required = false) String searchTerm,
             @RequestParam(defaultValue = "0") int page,
@@ -34,7 +33,7 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @GetMapping("/{id}/inventory")
+    @GetMapping("product/{id}/inventory")
     public ResponseEntity<Inventory> getProductInventory(@PathVariable Long id) {
         Optional<Inventory> opInventory = productService.findInventoryByProductId(id);
         return opInventory.map(ResponseEntity::ok)
