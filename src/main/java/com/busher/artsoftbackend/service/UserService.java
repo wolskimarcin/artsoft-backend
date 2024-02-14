@@ -12,8 +12,6 @@ import com.busher.artsoftbackend.exception.UserNotVerifiedException;
 import com.busher.artsoftbackend.model.LocalUser;
 import com.busher.artsoftbackend.model.VerificationToken;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -28,7 +26,6 @@ public class UserService {
     private final PasswordHashingService passwordHashingService;
     private final JWTService jwtService;
     private final EmailService emailService;
-    private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public UserService(LocalUserRepository localUserRepository, VerificationTokenRepository verificationTokenRepository, PasswordHashingService passwordHashingService, JWTService jwtService, EmailService emailService) {
         this.localUserRepository = localUserRepository;
@@ -49,8 +46,6 @@ public class UserService {
         user.setFirstName(registrationBody.getFirstName());
         user.setLastName(registrationBody.getLastName());
         user.setPassword(passwordHashingService.hashPassword(registrationBody.getPassword()));
-        user.setIsEmailVerified(true); // TODO: temporarily disabled email verification until AWS completes DNS domain verification.
-        logger.info("Email verification is temporarily disabled until AWS completes DNS domain verification. Email is verified by default, please proceed to login.");
         VerificationToken verificationToken = createVerificationToken(user);
         emailService.sendVerificationEmail(verificationToken);
         return localUserRepository.save(user);
