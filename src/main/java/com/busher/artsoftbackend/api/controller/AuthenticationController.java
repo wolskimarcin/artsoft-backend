@@ -41,7 +41,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody LoginBody loginBody) {
-        String jwt;
+        String jwt = null;
         try {
             jwt = userService.loginUser(loginBody);
         } catch (UserNotVerifiedException e) {
