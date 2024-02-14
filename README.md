@@ -11,50 +11,60 @@ smtp4dev for email testing in development environments, and Swagger UI for inter
 Frontend project is available at [artsoft-frontend](https://github.com/wolskimarcin/artsoft-frontend).
 
 
-
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-### Prerequisites
+## Prerequisites
 
-Before you begin, ensure you have Docker installed on your system.
+Ensure Docker and Docker Compose are installed on your system before proceeding.
 
-### Setting Up the Development Environment
+### Cloning the Repository
+
+First, clone the repository to your local machine. Open a terminal and run the following command:
+
+```bash
+git clone https://github.com/wolskimarcin/artsoft-backend.git
+```
+
+## Setting Up the Development Environment
+
+To set up your development environment, simply run the `docker-compose.yml` file. This approach eliminates the need for manually creating and managing containers.
+
+Run the following command:
+
+```bash
+docker-compose up -d
+```
+
+This command orchestrates the setup of your entire development environment, including the PostgreSQL database and smtp4dev, as defined in the `docker-compose.yml`.
+
+### Components
 
 #### PostgreSQL Database
 
-1. **Create a PostgreSQL container**:
-    ```bash
-    docker run --name artsoft-postgres-container -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -d -p 5432:5432 postgres
-    ```
-
-2. **Restart the PostgreSQL container** (if needed):
-    ```bash
-    docker restart artsoft-postgres-container
-    ```
+The PostgreSQL service is configured in `docker-compose.yml`. It is automatically set up with the necessary environment variables (`POSTGRES_USER` and `POSTGRES_PASSWORD`) and port mappings.
 
 #### smtp4dev
 
-smtp4dev is used to simulate an SMTP server for development purposes.
+smtp4dev is configured to simulate an SMTP server, aiding in the development and testing of email functionalities. It's also set up through `docker-compose.yml`, making it readily accessible without additional commands.
 
-1. **Run smtp4dev in Docker**:
-    ```bash
-    docker run --rm -it -p 3000:80 -p 2525:25 rnwood/smtp4dev
-    ```
+- **Accessing the smtp4dev Web Interface**:
 
-2. **Access the smtp4dev web interface**:
-   Open your web browser and navigate to:
-    ```
-    http://localhost:3000/
-    ```
+  Open your web browser and navigate to `http://localhost:3000/` to interact with the smtp4dev interface.
 
 #### Swagger UI
 
-Swagger UI is utilized for documenting and testing the REST API endpoints.
+Swagger UI is integrated for easy documentation and testing of REST API endpoints.
 
-- **Access Swagger UI**:
-  Open your web browser and navigate to:
-    ```
-    http://localhost:8080/swagger-ui/index.html
-    ```
+- **Accessing Swagger UI**:
+
+  Open your web browser and go to `http://localhost:8080/swagger-ui/index.html` to view and test your API's endpoints.
+
+### Managing Your Environment
+
+- **Starting Services**: If your services are not running, start them with `docker-compose up -d`.
+
+- **Stopping Services**: To stop all services, use `docker-compose down`. For stopping without removing containers, networks, etc., use `docker-compose stop`.
+
+- **Restarting Services**: To restart any service, use `docker-compose restart <service_name>`. For a complete restart of all services, you can run `docker-compose down` followed by `docker-compose up -d`.
