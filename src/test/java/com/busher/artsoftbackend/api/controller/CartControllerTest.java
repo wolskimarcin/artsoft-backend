@@ -1,6 +1,7 @@
 package com.busher.artsoftbackend.api.controller;
 
 import com.busher.artsoftbackend.api.dto.CartItemRequest;
+import com.busher.artsoftbackend.model.Cart;
 import com.busher.artsoftbackend.model.CartItem;
 import com.busher.artsoftbackend.model.LocalUser;
 import com.busher.artsoftbackend.service.CartService;
@@ -19,8 +20,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -103,5 +103,17 @@ public class CartControllerTest {
                 .andExpect(status().isOk());
 
         verify(cartService, times(1)).removeCartItem(testUser, itemId);
+    }
+
+    @Test
+    void getCurrentCart_ReturnsCartForAuthenticatedUser() throws Exception {
+        Cart cart = new Cart();
+        when(cartService.getCurrentCart(any(LocalUser.class))).thenReturn(cart);
+
+        mockMvc.perform(get("/cart").with(user(testUser)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"));
+
+        verify(cartService, times(1)).getCurrentCart(any(LocalUser.class));
     }
 }

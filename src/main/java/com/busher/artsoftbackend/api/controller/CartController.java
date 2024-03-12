@@ -1,6 +1,7 @@
 package com.busher.artsoftbackend.api.controller;
 
 import com.busher.artsoftbackend.api.dto.CartItemRequest;
+import com.busher.artsoftbackend.model.Cart;
 import com.busher.artsoftbackend.model.CartItem;
 import com.busher.artsoftbackend.model.LocalUser;
 import com.busher.artsoftbackend.service.CartService;
@@ -38,5 +39,11 @@ public class CartController {
                                             @PathVariable Long itemId) {
         cartService.removeCartItem(user, itemId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Cart> getCurrentCart(@AuthenticationPrincipal LocalUser user) {
+        Cart cart = cartService.getCurrentCart(user);
+        return ResponseEntity.ok(cart);
     }
 }

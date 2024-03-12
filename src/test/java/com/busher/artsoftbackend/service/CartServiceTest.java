@@ -15,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -91,5 +92,36 @@ public class CartServiceTest {
         cartService.removeCartItem(user, itemId);
 
         verify(cartItemRepository).deleteById(itemId);
+    }
+
+    @Test
+    void whenCartExistsForUser_thenReturnCart() {
+        Long userId = 1L;
+        LocalUser user = new LocalUser();
+        user.setId(userId);
+
+        Cart existingCart = new Cart();
+        when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(existingCart));
+
+        Cart cart = cartService.getCurrentCart(user);
+
+        assertEquals(existingCart, cart);
+        verify(cartRepository, times(1)).findByUserId(userId);
+    }
+
+    @Test
+    void whenCartDoesNotExistForUser_thenCreateNewCart() {
+        Long userId = 1L;
+        LocalUser user = new LocalUser();
+        user.setId(userId);
+
+        when(cartRepository.findByUserId(userId)).thenReturn(Optional.empty());
+        when(cartRepository.save(any(Cart.class))).thenAnswer(i -> i.getArgument(0));
+
+        Cart newCart = cartService.getCurrentCart(user);
+
+        assertNotNull(newCart);
+        verify(cartRepository, times(1)).findByUserId(userId);
+        verify(cartRepository, times(1)).save(any(Cart.class));
     }
 }

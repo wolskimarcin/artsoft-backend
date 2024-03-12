@@ -57,4 +57,13 @@ public class CartService {
         cartItem.setQuantity(quantity);
         return cartItemRepository.save(cartItem);
     }
+
+    @Transactional
+    public Cart getCurrentCart(LocalUser user) {
+        return cartRepository.findByUserId(user.getId()).orElseGet(() -> {
+            Cart newCart = new Cart();
+            newCart.setUser(user);
+            return cartRepository.save(newCart);
+        });
+    }
 }
