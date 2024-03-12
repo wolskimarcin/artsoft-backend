@@ -1,9 +1,12 @@
 package com.busher.artsoftbackend.config;
 
 import com.busher.artsoftbackend.dao.InventoryRepository;
+import com.busher.artsoftbackend.dao.LocalUserRepository;
 import com.busher.artsoftbackend.dao.ProductRepository;
 import com.busher.artsoftbackend.model.Inventory;
+import com.busher.artsoftbackend.model.LocalUser;
 import com.busher.artsoftbackend.model.Product;
+import com.busher.artsoftbackend.service.PasswordHashingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -20,12 +23,15 @@ public class DataInitializer implements ApplicationRunner {
 
     private final ProductRepository productRepository;
     private final InventoryRepository inventoryRepository;
-
+    private final LocalUserRepository localUserRepository;
+    private final PasswordHashingService passwordHashingService;
     private final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
-    public DataInitializer(ProductRepository productRepository, InventoryRepository inventoryRepository) {
+    public DataInitializer(ProductRepository productRepository, InventoryRepository inventoryRepository, LocalUserRepository localUserRepository, PasswordHashingService passwordHashingService) {
         this.productRepository = productRepository;
         this.inventoryRepository = inventoryRepository;
+        this.localUserRepository = localUserRepository;
+        this.passwordHashingService = passwordHashingService;
     }
 
     @Override
@@ -74,5 +80,15 @@ public class DataInitializer implements ApplicationRunner {
 
         inventoryRepository.saveAll(inventories);
 
+
+        LocalUser adminUser = new LocalUser();
+        adminUser.setId(2137L);
+        adminUser.setUsername("admin");
+        adminUser.setPassword(passwordHashingService.hashPassword("password2137"));
+        adminUser.setEmail("admin@example.com");
+        adminUser.setFirstName("Admin");
+        adminUser.setLastName("Temporary");
+        adminUser.setIsEmailVerified(true);
+        localUserRepository.save(adminUser);
     }
 }
