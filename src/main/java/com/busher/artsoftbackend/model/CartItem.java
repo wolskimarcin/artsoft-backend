@@ -1,5 +1,6 @@
 package com.busher.artsoftbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class CartItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
+    @JsonIgnore
     private Cart cart;
 
     @Column(name = "product_id", nullable = false)
@@ -25,8 +27,7 @@ public class CartItem {
     @Column(nullable = false)
     private Integer quantity;
 
-    public CartItem(Long id, Cart cart, Long productId, Integer quantity) {
-        this.id = id;
+    public CartItem(Cart cart, Long productId, Integer quantity) {
         this.cart = cart;
         this.productId = productId;
         this.quantity = quantity;
