@@ -105,4 +105,35 @@ public class ProductControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void whenGetProductDetails_andProductExists_thenReturnsProduct() throws Exception {
+        Long productId = 1L;
+        Product product = new Product();
+        product.setId(productId);
+        product.setName("Dog Toy");
+        product.setShortDescription("A toy for dogs");
+        product.setLongDescription("Ensuring hours of fun.");
+        product.setPrice(15.99);
+
+        Mockito.when(productService.getProduct(productId)).thenReturn(Optional.of(product));
+
+        mockMvc.perform(get("/product/{id}", productId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(productId))
+                .andExpect(jsonPath("$.name").value("Dog Toy"))
+                .andExpect(jsonPath("$.shortDescription").value("A toy for dogs"))
+                .andExpect(jsonPath("$.longDescription").value("Ensuring hours of fun."))
+                .andExpect(jsonPath("$.price").value(15.99));
+    }
+
+    @Test
+    void whenGetProductDetails_andProductDoesNotExist_thenReturnsNotFound() throws Exception {
+        Long productId = 3L;
+
+        Mockito.when(productService.getProduct(productId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/product/{id}", productId))
+                .andExpect(status().isNotFound());
+    }
+
 }
