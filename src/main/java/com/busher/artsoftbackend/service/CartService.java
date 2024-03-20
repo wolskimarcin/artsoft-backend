@@ -1,24 +1,33 @@
 package com.busher.artsoftbackend.service;
 
+import com.busher.artsoftbackend.api.dto.CartSummary;
 import com.busher.artsoftbackend.dao.CartItemRepository;
 import com.busher.artsoftbackend.dao.CartRepository;
 import com.busher.artsoftbackend.model.Cart;
 import com.busher.artsoftbackend.model.CartItem;
 import com.busher.artsoftbackend.model.LocalUser;
+import com.busher.artsoftbackend.model.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final ProductService productService;
 
-    public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository) {
+    public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository, ProductService productService) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
+        this.productService = productService;
     }
 
     @Transactional
@@ -66,4 +75,30 @@ public class CartService {
             return cartRepository.save(newCart);
         });
     }
+
+    public CartSummary getCartSummary(LocalUser user) {
+        Cart cart = getCurrentCart(user);
+
+        Set<Long> productIds = cart.getItems().stream()
+                .map(CartItem::getProductId)
+                .collect(Collectors.toSet());
+        List<Product> products = productService.getProductsByIds(productIds);
+
+        Map<Long, Product> productMap = products.stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+
+        double totalCost = 0;
+        int itemCount = 0;
+        for (CartItem item : cart.getItems()) {
+            Product product = productMap.get(item.getProductId());
+            if (product != null) {
+                totalCost += product.getPrice() * item.getQuantity();
+                itemCount += item.getQuantity();
+            }
+        }
+
+        return new CartSummary(itemCount, totalCost);
+    }
+
+
 }

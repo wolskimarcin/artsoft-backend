@@ -1,6 +1,7 @@
 package com.busher.artsoftbackend.api.controller;
 
 import com.busher.artsoftbackend.api.dto.CartItemRequest;
+import com.busher.artsoftbackend.api.dto.CartSummary;
 import com.busher.artsoftbackend.model.Cart;
 import com.busher.artsoftbackend.model.CartItem;
 import com.busher.artsoftbackend.model.LocalUser;
@@ -46,4 +47,11 @@ public class CartController {
         Cart cart = cartService.getCurrentCart(user);
         return ResponseEntity.ok(cart);
     }
+
+    @GetMapping("/summary")
+    public ResponseEntity<CartSummary> getCartSummary(@AuthenticationPrincipal LocalUser user) {
+        CartSummary summary = cartService.getCartSummary(user);
+        return ResponseEntity.ok(summary);
+    }
+
 }

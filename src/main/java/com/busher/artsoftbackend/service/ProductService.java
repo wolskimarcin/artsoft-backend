@@ -11,7 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ProductService {
@@ -56,5 +58,9 @@ public class ProductService {
 
     public Optional<Product> getProduct(Long id) {
         return productRepository.findById(id);
+    }
+
+    public List<Product> getProductsByIds(Set<Long> productIds) {
+        return productRepository.findAllById(productIds);
     }
 }
