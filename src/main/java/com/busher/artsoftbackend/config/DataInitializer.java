@@ -39,15 +39,15 @@ public class DataInitializer implements ApplicationRunner {
         logger.info("Initializing products in the database...");
 
         List<Product> products = Arrays.asList(
-                new Product(null, "ASG Gun", "Simple ASG Gun for beginners.", "Lorem ipsum dolor sit amet", 22.50, null),
-                new Product(null, "TechGadget X", "Compact and powerful tech gadget.", "Explore the latest features of TechGadget X.", 99.99, null),
+                new Product(null, "Journey Through Java", "Introduction to Java programming.", "A comprehensive guide to master Java programming for beginners. Covering fundamentals to advanced topics.", 45.00, null),
+                new Product(null, "EcoSmart Speaker", "Eco-friendly smart speaker with high-quality sound.", "Experience premium sound quality while being environmentally conscious. Features voice control and seamless integration with your smart home.", 120.00, null),
                 new Product(null, "Fashionable Watch", "Elegant design, perfect for any occasion.", "Stay on time with this fashionable and functional watch.", 49.99, null),
                 new Product(null, "Adventure Backpack", "Durable backpack for all your adventures.", "Explore the outdoors with confidence using our Adventure Backpack.", 79.99, null),
                 new Product(null, "Smart Home Hub", "Control your home with the latest smart technology.", "Transform your living space with our advanced Smart Home Hub.", 129.99, null),
                 new Product(null, "Eco-Friendly Water Bottle", "Stay hydrated with an environmentally conscious choice.", "Our Eco-Friendly Water Bottle is made from 100% recycled materials, designed to keep you hydrated while reducing plastic waste. Perfect for the eco-conscious consumer.", 14.95, null),
                 new Product(null, "Wireless Earbuds Pro", "Immersive sound, anytime, anywhere.", "Experience unparalleled sound quality with our Wireless Earbuds Pro. Featuring noise cancellation technology and long-lasting battery life for all-day listening.", 159.99, null),
                 new Product(null, "Professional Kitchen Knife Set", "Precision cutting for culinary enthusiasts.", "Elevate your cooking with our Professional Kitchen Knife Set. Each knife is crafted for durability and precision, ensuring the perfect cut every time.", 199.99, null),
-                new Product(null, "Organic Skin Care Bundle", "Nourish your skin with the best of nature.", "Our Organic Skin Care Bundle includes a range of products made from natural ingredients, designed to hydrate, nourish, and rejuvenate your skin.", 59.99, null),
+                new Product(null, "Organic Cream", "Nourish your skin with the best of nature.", "Our Organic Skin Care Bundle includes a range of products made from natural ingredients, designed to hydrate, nourish, and rejuvenate your skin.", 59.99, null),
                 new Product(null, "Virtual Reality Headset", "Step into new worlds with cutting-edge VR technology.", "Our Virtual Reality Headset offers an immersive experience with high-resolution display and motion tracking, bringing virtual worlds to life.", 299.99, null),
                 new Product(null, "Ergonomic Office Chair", "Comfort and support for your workday.", "Maximize productivity with our Ergonomic Office Chair, featuring adjustable height and lumbar support to keep you comfortable for hours.", 249.99, null),
                 new Product(null, "LED Smart Light Bulb", "Illuminate your home with smart lighting.", "Our LED Smart Light Bulb can be controlled via smartphone, offering millions of colors and adjustable brightness to suit any mood or occasion.", 19.99, null),
